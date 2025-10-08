@@ -1,8 +1,7 @@
-python-3.11
 streamlit
 plotly
 pandas
-bcrypt
-psycopg2-binary
-python-dotenv
-bcrypt
+bcrypt==4.0.1
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
+python-3.11
