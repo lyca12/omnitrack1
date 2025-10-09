@@ -192,7 +192,7 @@ def show_customer_navigation():
 
 # Admin Dashboard Functions
 def show_admin_dashboard():
-    from pages.admin_dashboard import show_admin_dashboard_page
+    from page.admin_dashboard import show_admin_dashboard_page
     show_admin_dashboard_page(db)
 
 def show_product_management():
