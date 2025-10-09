@@ -50,7 +50,7 @@ if not st.session_state['logged_in']:
                 st.session_state['logged_in'] = True
                 st.session_state['user_info'] = user
                 st.success("Login successful!")
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Invalid username or password.")
     
@@ -68,7 +68,7 @@ else:
     if st.sidebar.button("Logout"):
         st.session_state['logged_in'] = False
         st.session_state['user_info'] = None
-        st.experimental_rerun()
+        st.rerun()
 
     # --- Role-Based Dashboards ---
     if user['role'] == 'admin':
