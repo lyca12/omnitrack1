@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 from auth import AuthManager
 from database import DatabaseManager
 import pandas as pd
@@ -103,6 +104,7 @@ def show_login_page():
                     st.rerun()
 
 def show_authenticated_app():
+    # Sidebar navigation
     st.sidebar.title(f"Welcome, {st.session_state.username}")
     st.sidebar.write(f"Role: {st.session_state.user_role.title()}")
     
@@ -113,7 +115,7 @@ def show_authenticated_app():
         st.rerun()
     
     st.sidebar.divider()
-
+    
     # Role-based navigation
     if st.session_state.user_role == 'admin':
         show_admin_navigation()
