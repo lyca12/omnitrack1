@@ -31,6 +31,7 @@ class Product:
     stock_quantity: int
     category: Optional[str]
     low_stock_threshold: int = 10
+    sku:Optional[str] = None
 
     @property
     def is_low_stock(self) -> bool:
