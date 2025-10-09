@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 from auth import AuthManager
 from database import DatabaseManager
 import pandas as pd
@@ -206,13 +205,13 @@ def show_reports():
     with col1:
         st.metric("Total Orders", len(orders))
     with col2:
-        total_revenue = sum(order['total_amount'] for order in orders if order['status'] == 'delivered')
+        total_revenue = sum(order.total_amount for order in orders if order.status.value == 'delivered')
         st.metric("Total Revenue", f"${total_revenue:.2f}")
     with col3:
-        pending_orders = [o for o in orders if o['status'] in ['placed', 'paid']]
+        pending_orders = [o for o in orders if o.status.value in ['placed', 'paid']]
         st.metric("Pending Orders", len(pending_orders))
     with col4:
-        low_stock = [p for p in products if p['stock_quantity'] < 10]
+        low_stock = [p for p in products if p.stock_quantity < 10]
         st.metric("Low Stock Items", len(low_stock))
     
     # Revenue Chart
@@ -238,35 +237,37 @@ def show_staff_dashboard():
 def show_order_fulfillment():
     st.title("📋 Order Fulfillment")
     
-    orders = [o for o in db.get_all_orders() if o['status'] in ['placed', 'paid']]
+    orders = [o for o in db.get_all_orders() if o.status.value in ['placed', 'paid']]
     
     if not orders:
         st.info("No pending orders to fulfill.")
         return
     
     for order in orders:
-        with st.expander(f"Order #{order['id']} - {order['username']} - ${order['total_amount']:.2f}"):
-            st.write(f"**Status:** {order['status'].title()}")
-            st.write(f"**Created:** {order['created_at']}")
+        with st.expander(f"Order #{order.id} - {order.username} - ${order.total_amount:.2f}"):
+            st.write(f"**Status:** {order.status.value.title()}")
+            st.write(f"**Created:** {order.created_at}")
             
             # Get order items
-            items = db.get_order_items(order['id'])
+            items = db.get_order_items(order.id)
             if items:
                 st.write("**Items:**")
                 for item in items:
-                    st.write(f"- {item['product_name']} x{item['quantity']} @ ${item['unit_price']:.2f}")
+                    st.write(f"- {item.product_name} x{item.quantity} @ ${item.unit_price:.2f}")
             
             col1, col2 = st.columns(2)
             
             with col1:
-                if order['status'] == 'placed' and st.button(f"Mark as Paid", key=f"pay_{order['id']}"):
-                    if db.update_order_status(order['id'], 'paid'):
+                if order.status.value == 'placed' and st.button("Mark as Paid", key=f"pay_{order.id}"):
+                    from models import OrderStatus
+                    if db.update_order_status(order.id, OrderStatus.PAID):
                         st.success("Order marked as paid!")
                         st.rerun()
             
             with col2:
-                if order['status'] == 'paid' and st.button(f"Mark as Delivered", key=f"deliver_{order['id']}"):
-                    if db.update_order_status(order['id'], 'delivered'):
+                if order.status.value == 'paid' and st.button("Mark as Delivered", key=f"deliver_{order.id}"):
+                    from models import OrderStatus
+                    if db.update_order_status(order.id, OrderStatus.DELIVERED):
                         st.success("Order marked as delivered!")
                         st.rerun()
 
