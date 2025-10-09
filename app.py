@@ -29,10 +29,11 @@ def main():
         initial_sidebar_state="expanded"
     )
     
+    # Check authentication state
     if not st.session_state.authenticated:
-        show_login_page()
+        show_login_page()  # Correct indentation here
     else:
-        show_authenticated_app()
+        show_authenticated_app()  # Correct indentation here
 
 def show_login_page():
     st.title("🏪 OmniTrack")
