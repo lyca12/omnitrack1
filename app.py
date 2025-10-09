@@ -9,7 +9,7 @@ import pandas as pd
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # -----------------------------------
 
-#from auth import AuthManager
+from auth import AuthManager
 from database import DatabaseManager
 
 # Initialize session state (your original logic)
