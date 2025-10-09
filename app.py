@@ -3,11 +3,9 @@ import os
 import sys
 import pandas as pd
 
-# --- FIX FOR ModuleNotFoundError ---
-# This block adds the parent directory ('Omnitrack1/') to Python's path.
-# This allows the script to find the 'auth', 'database', and 'pages' modules.
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-# -----------------------------------
+
 
 from auth import AuthManager
 from database import DatabaseManager
