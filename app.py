@@ -196,11 +196,11 @@ def show_admin_dashboard():
     show_admin_dashboard_page(db)
 
 def show_product_management():
-    from pages.product_management import show_product_management_page
+    from page.product_management import show_product_management_page
     show_product_management_page(db)
 
 def show_admin_order_management():
-    from pages.order_management import show_admin_order_management_page
+    from page.order_management import show_admin_order_management_page
     show_admin_order_management_page(db)
 
 def show_reports():
