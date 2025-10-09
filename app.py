@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 from auth import AuthManager
 from database import DatabaseManager
 import pandas as pd
@@ -29,11 +28,10 @@ def main():
         initial_sidebar_state="expanded"
     )
     
-    # Check authentication state
     if not st.session_state.authenticated:
-        show_login_page()  # Correct indentation here
+        show_login_page()
     else:
-        show_authenticated_app()  # Correct indentation here
+        show_authenticated_app()
 
 def show_login_page():
     st.title("🏪 OmniTrack")
@@ -105,7 +103,6 @@ def show_login_page():
                     st.rerun()
 
 def show_authenticated_app():
-    # Sidebar navigation
     st.sidebar.title(f"Welcome, {st.session_state.username}")
     st.sidebar.write(f"Role: {st.session_state.user_role.title()}")
     
@@ -116,7 +113,7 @@ def show_authenticated_app():
         st.rerun()
     
     st.sidebar.divider()
-    
+
     # Role-based navigation
     if st.session_state.user_role == 'admin':
         show_admin_navigation()
