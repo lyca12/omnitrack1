@@ -1,69 +1,43 @@
-import bcrypt
-import os
-from typing import Optional, Dict
-from database import DatabaseManager
+# database.py
 
-class AuthManager:
-    def __init__(self, db: DatabaseManager):
-        self.db = db
-        self.session_secret = os.getenv('SESSION_SECRET', 'default_secret_key')
-    
-    def hash_password(self, password: str) -> str:
-        """Hash a password using bcrypt"""
-        salt = bcrypt.gensalt()
-        return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
-    
-    def verify_password(self, password: str, hashed: str) -> bool:
-        """Verify a password against its hash"""
-        return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
-    
-    def register_user(self, username: str, password: str, role: str = 'customer') -> bool:
-        """Register a new user"""
-        if not username or not password:
-            return False
-        
-        # Check if username already exists
-        if self.db.get_user(username):
-            return False
-        
-        hashed_password = self.hash_password(password)
-        return self.db.create_user(username, hashed_password, role)
-    
-    def authenticate_user(self, username: str, password: str) -> Optional[Dict]:
-        """Authenticate a user and return user data"""
-        if not username or not password:
-            return None
-        
-        # Handle demo accounts
-        if username.endswith('_demo'):
-            role = username.replace('_demo', '')
-            if role in ['admin', 'staff', 'customer']:
+import psycopg2  # Assuming you're using psycopg2 for PostgreSQL, adjust for your DB
+from typing import Optional, Dict
+
+class DatabaseManager:
+    def __init__(self, db_connection):
+        self.db_connection = db_connection
+
+    def get_user(self, username: str) -> Optional[Dict]:
+        """Retrieve a user from the database by username"""
+        try:
+            query = "SELECT * FROM users WHERE username = %s"
+            cursor = self.db_connection.cursor()
+            cursor.execute(query, (username,))
+            user = cursor.fetchone()
+            cursor.close()
+            
+            if user:
                 return {
-                    'id': 0,
-                    'username': username,
-                    'role': role,
-                    'created_at': '2024-01-01 00:00:00'
+                    'id': user[0],  # Assuming 'id' is the first column in your schema
+                    'username': user[1],  # Assuming 'username' is the second column
+                    'password_hash': user[2],  # Assuming 'password_hash' is the third column
+                    'role': user[3],  # Assuming 'role' is the fourth column
+                    'created_at': user[4]  # Assuming 'created_at' is the fifth column
                 }
             return None
-        
-        user = self.db.get_user(username)
-        if not user:
+        except Exception as e:
+            print(f"Error retrieving user {username}: {e}")
             return None
-        
-        if self.verify_password(password, user['password_hash']):
-            return {
-                'id': user['id'],
-                'username': user['username'],
-                'role': user['role'],
-                'created_at': user['created_at']
-            }
-        
-        return None
-    
-    def create_admin_user(self, username: str, password: str) -> bool:
-        """Create an admin user"""
-        return self.register_user(username, password, 'admin')
-    
-    def create_staff_user(self, username: str, password: str) -> bool:
-        """Create a staff user"""
-        return self.register_user(username, password, 'staff')
+
+    def create_user(self, username: str, password_hash: str, role: str) -> bool:
+        """Create a new user in the database"""
+        try:
+            query = "INSERT INTO users (username, password_hash, role) VALUES (%s, %s, %s)"
+            cursor = self.db_connection.cursor()
+            cursor.execute(query, (username, password_hash, role))
+            self.db_connection.commit()
+            cursor.close()
+            return True
+        except Exception as e:
+            print(f"Error creating user {username}: {e}")
+            return False
