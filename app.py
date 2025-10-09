@@ -241,7 +241,7 @@ def show_reports():
 
 # Staff Dashboard Functions
 def show_staff_dashboard():
-    from pages.staff_dashboard import show_staff_dashboard_page
+    from page.staff_dashboard import show_staff_dashboard_page
     show_staff_dashboard_page(db)
 
 def show_order_fulfillment():
@@ -298,7 +298,7 @@ def show_inventory_check():
 
 # Customer Functions
 def show_shop():
-    from pages.customer_dashboard import show_shop_page
+    from page.customer_dashboard import show_shop_page
     show_shop_page(db, st.session_state.username)
 
 def show_my_orders():
