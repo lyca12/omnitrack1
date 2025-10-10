@@ -132,7 +132,7 @@ def calculate_inventory_value(products):
 
 def get_top_selling_products(orders, limit=10):
     """Get top selling products from order data"""
-    product_sales = {}
+    #product_sales = {}
     
     # This would require joining with order_items table
     # For now, return empty list as this requires more complex DB queries
