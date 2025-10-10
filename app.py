@@ -205,7 +205,7 @@ def show_reports():
     with col1:
         st.metric("Total Orders", len(orders))
     with col2:
-        total_revenue = sum(order.total_amount for order in orders if order.status.value == 'delivered')
+        total_revenue = sum(order.total_amount for order in orders if order.status == 'delivered')
         st.metric("Total Revenue", f"${total_revenue:.2f}")
     with col3:
         pending_orders = [o for o in orders if o.status.value in ['placed', 'paid']]
